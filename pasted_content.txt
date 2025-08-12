@@ -1,0 +1,289 @@
+PROMPT — Bot de Controle de Gastos (Telegram com saldo compartilhado + WhatsApp com envio automático para observadores)
+Objetivo
+Criar um bot simples para registrar entradas, saídas e mostrar saldo.
+O bot deve funcionar em dois modos:
+
+Telegram em grupo
+
+Saldo é compartilhado entre todos do grupo.
+
+Qualquer membro pode registrar lançamentos.
+
+Respostas devem mostrar quem fez a ação e saldo do grupo.
+
+WhatsApp
+
+Cada usuário tem seu próprio controle.
+
+Pode cadastrar observadores (outros números) que recebem automaticamente cópia de todas as movimentações registradas.
+
+Observadores recebem a mesma mensagem que o autor.
+
+1. Comandos principais
+Entrada de dinheiro
+Telegram: /entrada <valor> [descrição] [data opcional]
+
+WhatsApp: entrada <valor> [descrição] [data opcional]
+
+Exemplo:
+
+bash
+Copiar
+Editar
+/entrada 1500 salário
+Resposta:
+
+No Telegram (grupo):
+
+ruby
+Copiar
+Editar
+João ➕ Entrada registrada: R$ 1.500,00 — salário (12/08/2025)
+💰 Saldo do grupo: R$ 2.350,75
+No WhatsApp (individual):
+
+ruby
+Copiar
+Editar
+➕ Entrada registrada: R$ 1.500,00 — salário (12/08/2025)
+💰 Seu saldo: R$ 2.350,75
+E enviar essa mesma mensagem para todos observadores cadastrados.
+
+Saída de dinheiro
+Telegram: /saida <valor> [descrição] [data opcional]
+
+WhatsApp: saida <valor> [descrição] [data opcional]
+
+Exemplo:
+
+swift
+Copiar
+Editar
+saida 89,90 mercado 11/08/2025
+Resposta:
+
+Telegram:
+
+ruby
+Copiar
+Editar
+João ➖ Saída registrada: R$ 89,90 — mercado (11/08/2025)
+💰 Saldo do grupo: R$ 2.260,85
+WhatsApp:
+
+ruby
+Copiar
+Editar
+➖ Saída registrada: R$ 89,90 — mercado (11/08/2025)
+💰 Seu saldo: R$ 2.260,85
+Enviar também para observadores.
+
+Saldo
+/saldo ou saldo
+
+Telegram:
+
+perl
+Copiar
+Editar
+💰 Saldo atual do grupo: R$ 2.260,85 (12 lançamentos no mês)
+WhatsApp:
+
+yaml
+Copiar
+Editar
+💰 Seu saldo: R$ 2.260,85 (12 lançamentos no mês)
+Listar últimos
+/listar ou listar
+
+Aceitar /listar 10 para mais itens.
+
+Mostrar tipo (➕/➖), valor, descrição e data.
+
+Resumo do mês
+/resumo ou resumo
+
+makefile
+Copiar
+Editar
+📅 Resumo 08/2025
+Entradas: R$ 3.200,00
+Saídas:   R$ 1.480,50
+Saldo:    R$ 1.719,50
+Desfazer último
+/desfazer ou desfazer
+
+Remove último lançamento do grupo (Telegram) ou do usuário (WhatsApp) e mostra saldo atualizado.
+
+2. Comandos extras (WhatsApp)
+cadastrar <número> → adiciona número como observador.
+Exemplo:
+
+nginx
+Copiar
+Editar
+cadastrar +551199999999
+Resposta:
+
+yaml
+Copiar
+Editar
+✅ Observador adicionado: +55 11 99999-9999
+remover <número> → remove observador.
+Exemplo:
+
+nginx
+Copiar
+Editar
+remover +551199999999
+Resposta:
+
+yaml
+Copiar
+Editar
+❌ Observador removido: +55 11 99999-9999
+Sempre que houver entrada ou saída, enviar a mesma mensagem também para todos observadores.
+
+3. Regras de UX
+Valores formatados em R$ com vírgula decimal e 2 casas (ex.: R$ 1.234,56).
+
+Aceitar vírgula ou ponto nos valores digitados.
+
+Se data não for informada, usar data de hoje.
+
+Se valor não for numérico, responder:
+
+bash
+Copiar
+Editar
+❗ Valor inválido. Exemplo: /saida 150 mercado
+No Telegram em grupo, prefixar respostas com nome de quem fez a ação.
+
+No WhatsApp, responder diretamente sem nome, pois é individual.
+
+4. Estrutura de dados
+Telegram grupo:
+
+json
+Copiar
+Editar
+{
+  "chat_id": "ID_GRUPO",
+  "lancamentos": [
+    {"tipo": "entrada", "valor": 200.00, "descricao": "venda", "data": "2025-08-12", "autor": "João"}
+  ]
+}
+WhatsApp individual:
+
+json
+Copiar
+Editar
+{
+  "numero": "+551199999999",
+  "lancamentos": [
+    {"tipo": "saida", "valor": 50.00, "descricao": "mercado", "data": "2025-08-12"}
+  ],
+  "observadores": ["+551188888888", "+551177777777"]
+}
+5. Mensagem de boas-vindas
+Quando um usuário iniciar conversa ou entrar no grupo:
+
+bash
+Copiar
+Editar
+👋 Olá! Sou seu bot de controle de gastos.
+
+No Telegram:
+• /entrada 1500 salário
+• /saida 35 mercado
+• /saldo
+• /listar
+• /resumo
+
+No WhatsApp (sem barra):
+• entrada 1500 salário
+• saida 35 mercado
+• saldo
+• listar
+• resumo
+
+💡 No WhatsApp, use "cadastrar <número>" para adicionar observadores.
+Se quiser, eu também posso já te entregar um fluxo de armazenamento pronto para o bot funcionar no Manus IA, com a lógica de somar saldo e enviar para observadores, assim você só cola o código no campo de comportamento.
+Quer que eu já te faça esse fluxo técnico também?
+
+
+
+
+
+
+
+
+Você disse:
+e se eu errar o saldo colocado ou tirado consigo remover pra colocar?
+
+
+O ChatGPT disse:
+Sim 👍 — dá pra configurar no bot um comando de edição/remoção de lançamento errado.
+Na prática, existem duas formas:
+
+1️⃣ Modo rápido — "desfazer"
+Remove apenas o último lançamento registrado no grupo (Telegram) ou na conta (WhatsApp).
+
+Comando:
+
+bash
+Copiar
+Editar
+/desfazer     (Telegram)
+desfazer      (WhatsApp)
+O bot responde algo como:
+
+ruby
+Copiar
+Editar
+❌ Lançamento removido:
+➖ R$ 89,90 — mercado (11/08/2025)
+💰 Saldo atualizado: R$ 2.350,75
+2️⃣ Modo completo — "remover por número da lista"
+Você lista os últimos lançamentos:
+
+bash
+Copiar
+Editar
+/listar 5
+Retorno:
+
+ruby
+Copiar
+Editar
+📄 Últimos lançamentos:
+1) ➕ R$ 200,00 — venda (12/08/2025)
+2) ➖ R$ 89,90 — mercado (11/08/2025)
+3) ➕ R$ 150,00 — salário (10/08/2025)
+E remove pelo índice:
+
+bash
+Copiar
+Editar
+/remover 2   (Telegram)
+remover 2    (WhatsApp)
+O bot exclui aquele lançamento específico e recalcula o saldo.
+
+3️⃣ Ajustando o valor em vez de apagar
+Se você não quiser apagar e sim corrigir, o comando pode ser:
+
+java
+Copiar
+Editar
+/editar 2 95,00 mercado novo (Telegram)
+editar 2 95,00 mercado novo  (WhatsApp)
+Assim o bot substitui valor/descrição e recalcula o saldo.
+
+💡 Sugestão pra você
+No seu caso, como é um bot simples, dá pra ativar:
+
+/desfazer (para último lançamento)
+
+/remover <número> (para qualquer da lista)
+
+E depois, se precisar, podemos adicionar /editar para corrigir sem apagar.

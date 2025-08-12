@@ -1,0 +1,28 @@
+{
+  "5712349885": {
+    "chat_id": "5712349885",
+    "lancamentos": [
+      {
+        "tipo": "entrada",
+        "valor": 1000.0,
+        "descricao": "",
+        "data": "12/08/2025",
+        "autor": "Cesar"
+      },
+      {
+        "tipo": "entrada",
+        "valor": 100.0,
+        "descricao": "",
+        "data": "12/08/2025",
+        "autor": "Cesar"
+      },
+      {
+        "tipo": "saida",
+        "valor": 1000.0,
+        "descricao": "",
+        "data": "12/08/2025",
+        "autor": "Cesar"
+      }
+    ]
+  }
+}
